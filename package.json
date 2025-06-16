@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "forge": "ts-node"
   },
   "repository": {
     "type": "git",
@@ -19,6 +20,7 @@
   },
   "homepage": "https://github.com/quasar-x1/x-forge#readme",
   "devDependencies": {
+    "@types/js-yaml": "^4.0.9",
     "@types/node": "^22.15.30",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
@@ -26,6 +28,7 @@
   "dependencies": {
     "chalk": "^5.4.1",
     "commander": "^14.0.0",
-    "inquirer": "^12.6.3"
+    "inquirer": "^12.6.3",
+    "js-yaml": "^4.1.0"
   }
 }
