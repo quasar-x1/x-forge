@@ -13,14 +13,5 @@ interface ForgeConfig {
     };
 }
 
-type QuestionType = {
-    type: "input" | "list" | "checkbox";
-    name: string;
-    message: string;
-    choices?: string[];
-    default?: string[];
-    // validate?: (input: string) => boolean | string;
-};
-
-export {ForgeConfig, QuestionType};
+export {ForgeConfig};
 
