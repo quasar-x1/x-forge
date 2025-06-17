@@ -11,6 +11,8 @@ interface ForgeConfig {
     autofix: {
         enabled: boolean;
     };
+    pattern: string[];
+    ignore: string[];
 }
 
 export {ForgeConfig};

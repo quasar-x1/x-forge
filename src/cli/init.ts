@@ -48,6 +48,8 @@ async function initForge() {
         autofix: {
             enabled: true,
         },
+        pattern: ['**/*.{js,ts}'],
+        ignore: ['node_modules/']
     };
 
     try {
