@@ -23,13 +23,27 @@ async function initForge() {
             {
                 type: "checkbox",
                 name: "checkers",
-                message: `Select tool for project [${initialAnswers.projectLanguage}]:`,
+                message: `Select tool for project ${initialAnswers.projectName}:`,
                 choices: ["eslint", "prettier", "stylelint"],
                 default: ["eslint", "prettier"]
             }
         ]
     );
 
+    // const confirmAnswer = await inquirer.prompt([
+    //     {
+    //         type: "confirm",
+    //         name: "proceed",
+    //         message: "Do you want to create the .forge.yml config file?",
+    //         default: true
+    //     }
+    // ]);
+    //
+    // if (!confirmAnswer.proceed) {
+    //     console.log("Configuration cancelled.");
+    //     return;
+    // }
+    
     const answers = {...initialAnswers, ...checkerAnswer};
     console.log(answers);
 
@@ -48,6 +62,7 @@ async function initForge() {
         autofix: {
             enabled: true,
         },
+        ignore: []
     };
 
     try {
