@@ -3,58 +3,58 @@ import yaml from "js-yaml";
 import path from "path";
 
 export interface ForgeConfig {
-    project: {
-        name: string;
-        language: string;
+  project: {
+    name: string;
+    language: string;
+  };
+  checks: {
+    [key: string]: {
+      [tool: string]: boolean;
     };
-    checks: {
-        [key: string]: {
-            [tool: string]: boolean;
-        };
-    };
-    autofix: {
-        enabled: boolean;
-    };
-    ignore: string[];
+  };
+  autofix: {
+    enabled: boolean;
+  };
+  ignore: string[];
 }
 
 const CONFIG_FILE = ".forge.yml";
 
-export async function loadConfig(configPath: string = CONFIG_FILE): Promise<ForgeConfig | null> {
-    try {
-
-        if (!fs.existsSync(configPath)) {
-            return null;
-        }
-
-        const fileContent = fs.readFileSync(configPath, "utf8");
-        const config = yaml.load(fileContent) as ForgeConfig;
-
-        if (!config.ignore) {
-            config.ignore = [
-                'node_modules/',
-                'dist/',
-                'packages.json',
-                'yarn.lock',
-                'package-lock.json'
-            ];
-
-            return config;
-        }
-
-        return config;
-    } catch (error) {
-        console.error("Error loading config file:", error);
-        return null;
+export async function loadConfig(
+  configPath: string = CONFIG_FILE,
+): Promise<ForgeConfig | null> {
+  try {
+    if (!fs.existsSync(configPath)) {
+      return null;
     }
+
+    const fileContent = fs.readFileSync(configPath, "utf8");
+    const config = yaml.load(fileContent) as ForgeConfig;
+
+    if (!config.ignore) {
+      config.ignore = [
+        "node_modules/",
+        "dist/",
+        "packages.json",
+        "yarn.lock",
+        "package-lock.json",
+      ];
+
+      return config;
+    }
+
+    return config;
+  } catch (error) {
+    console.error("Error loading config file:", error);
+    return null;
+  }
 }
 
 export function getFileExtension(language: string) {
-    const extensionMap: { [key: string]: string } = {
-        JavaScript: "js",
-        TypeScript: "ts"
-    };
+  const extensionMap: { [key: string]: string } = {
+    JavaScript: "js",
+    TypeScript: "ts",
+  };
 
-    return extensionMap[language];
+  return extensionMap[language];
 }
-
