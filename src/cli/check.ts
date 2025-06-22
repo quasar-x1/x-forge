@@ -1,21 +1,7 @@
 import { Command } from "commander";
 import { loadConfig } from "../core/config";
 import { FileScanner } from "../core/file-scanner";
-
-interface checkResult {
-  files: string[];
-  tools: string[];
-  issues: issue[];
-}
-
-interface issue {
-  file: string;
-  tool: string;
-  line: number;
-  message: string;
-  severity: "error" | "warning" | "info";
-  fix?: string;
-}
+import { CheckerRunner, Issue, CheckResult } from "../core/checker-runner";
 
 async function checkProject() {
   try {
@@ -36,7 +22,11 @@ async function checkProject() {
     }
 
     console.log("Files to check:", files);
-    // const results: checkResult[] = [];
+
+    const runner = new CheckerRunner(config);
+    const issues = await runner.run(files);
+
+    console.log("Issues found:", issues);
   } catch (error) {
     console.error("Error loading config file:", error);
   }

@@ -20,16 +20,19 @@
   },
   "homepage": "https://github.com/quasar-x1/x-forge#readme",
   "devDependencies": {
+    "@eslint/js": "^9.29.0",
     "@types/eslint": "^9.6.1",
     "@types/js-yaml": "^4.0.9",
     "@types/node": "^22.15.30",
+    "eslint": "^9.29.0",
+    "globals": "^16.2.0",
     "ts-node": "^10.9.2",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.34.1"
   },
   "dependencies": {
     "chalk": "^5.4.1",
     "commander": "^14.0.0",
-    "eslint": "^9.29.0",
     "execa": "^9.6.0",
     "inquirer": "^12.6.3",
     "js-yaml": "^4.1.0",
