@@ -64,15 +64,15 @@ export class CheckerRunner {
     const issues: Issue[] = [];
 
     try {
-      const eslintIssues = await execa("npx", [
-        "eslint",
-        ".",
-        "json",
-        ...files,
-      ]);
+      const eslintIssues = await execa(
+        "npx",
+        ["eslint", "--format=json", ...files],
+        { reject: false },
+      );
 
       const eslintResult = JSON.parse(eslintIssues.stdout);
-      for (const result of eslintResult.results) {
+
+      for (const result of eslintResult) {
         for (const message of result.messages) {
           issues.push({
             file: result.filePath,
@@ -84,6 +84,8 @@ export class CheckerRunner {
           });
         }
       }
+
+      console.log("ESLint completed");
     } catch (error) {
       console.error("Error running ESLint:", error);
     }
@@ -95,11 +97,11 @@ export class CheckerRunner {
     const issues: Issue[] = [];
 
     try {
-      const prettierIssues = await execa("npx", [
-        "prettier",
-        "--check",
-        ...files,
-      ]);
+      const prettierIssues = await execa(
+        "npx",
+        ["prettier", "--check", "--list-different", ...files],
+        { reject: false },
+      );
       const prettierResult = JSON.parse(prettierIssues.stdout);
 
       for (const result of prettierResult.results) {
