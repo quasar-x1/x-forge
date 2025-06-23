@@ -84,8 +84,6 @@ export class CheckerRunner {
           });
         }
       }
-
-      console.log("ESLint completed");
     } catch (error) {
       console.error("Error running ESLint:", error);
     }
@@ -102,9 +100,10 @@ export class CheckerRunner {
         ["prettier", "--check", "--list-different", ...files],
         { reject: false },
       );
+
       const prettierResult = JSON.parse(prettierIssues.stdout);
 
-      for (const result of prettierResult.results) {
+      for (const result of prettierResult) {
         for (const message of result.messages) {
           issues.push({
             file: result.filePath,

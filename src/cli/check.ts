@@ -9,7 +9,9 @@ async function checkProject() {
     const config = await loadConfig();
     if (!config) {
       console.log(
-        "No config file found. Please run 'forge init' to initialize Forge.",
+        chalk.red(
+          "No config file found. Please run 'forge init' to initialize Forge.",
+        ),
       );
       return;
     }
@@ -19,18 +21,18 @@ async function checkProject() {
     const files = await scanner.getFiles();
 
     if (files.length === 0) {
-      console.log("No files found to check.");
+      console.log(chalk.red("No files found to check."));
       return;
     }
 
-    console.log("Files to check:", files);
+    console.log(chalk.blue("🔍 Checking files..."));
 
     const runner = new CheckerRunner(config);
     const issues = await runner.run(files);
 
-    console.log("Issues found:", issues);
+    console.log(chalk.red("Issues found:", issues.issues.length));
   } catch (error) {
-    console.error("Error loading config file:", error);
+    console.error(chalk.red("Error loading config file:", error));
   }
 }
 
