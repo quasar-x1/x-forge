@@ -1,4 +1,5 @@
 import fs from "fs";
+import chalk from "chalk";
 import yaml from "js-yaml";
 import inquirer from "inquirer";
 import { Command } from "commander";
@@ -23,28 +24,27 @@ async function initForge() {
     {
       type: "checkbox",
       name: "checkers",
-      message: `Select tool for project ${initialAnswers.projectName}:`,
+      message: "Select tool for your project",
       choices: ["eslint", "prettier", "stylelint"],
       default: ["eslint", "prettier"],
     },
   ]);
 
-  // const confirmAnswer = await inquirer.prompt([
-  //     {
-  //         type: "confirm",
-  //         name: "proceed",
-  //         message: "Do you want to create the .forge.yml config file?",
-  //         default: true
-  //     }
-  // ]);
-  //
-  // if (!confirmAnswer.proceed) {
-  //     console.log("Configuration cancelled.");
-  //     return;
-  // }
+  const confirmAnswer = await inquirer.prompt([
+    {
+      type: "confirm",
+      name: "proceed",
+      message: "Create initial configuration?",
+      default: true,
+    },
+  ]);
+
+  if (!confirmAnswer.proceed) {
+    console.log("Configuration cancelled.");
+    return;
+  }
 
   const answers = { ...initialAnswers, ...checkerAnswer };
-  console.log(answers);
 
   const config: ForgeConfig = {
     project: {
@@ -68,9 +68,9 @@ async function initForge() {
     // Write as YAML since the filename is .forge.yml
     const yamlContent = yaml.dump(config);
     fs.writeFileSync(".forge.yml", yamlContent, "utf8");
-    console.log("Forge initialized successfully");
+    console.log(chalk.green("Forge initialized successfully"));
   } catch (error) {
-    console.error("Error writing config file:", error);
+    console.error(chalk.red("Error writing config file:"), error);
     throw error;
   }
 }
@@ -84,10 +84,10 @@ export function initCommand(program: Command) {
         if (!fs.existsSync(".forge.yml")) {
           await initForge();
         } else {
-          console.log("Forge is already initialized");
+          console.log(chalk.red("Forge is already initialized"));
         }
       } catch (error) {
-        console.error("Error initializing Forge:", error);
+        console.error(chalk.red("Error initializing Forge:"), error);
       }
     });
 }
