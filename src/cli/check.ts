@@ -31,6 +31,7 @@ async function checkProject() {
     const issues = await runner.run(files);
 
     console.log(chalk.red("Issues found:", issues.issues.length));
+    console.log("Issues:", issues);
   } catch (error) {
     console.error(chalk.red("Error loading config file:", error));
   }
