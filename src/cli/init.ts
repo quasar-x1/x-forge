@@ -5,30 +5,51 @@ import inquirer from "inquirer";
 import { Command } from "commander";
 import { ForgeConfig } from "../core/config";
 
-async function initForge() {
-  const initialAnswers = await inquirer.prompt([
-    {
-      type: "input",
-      name: "projectName",
-      message: "Enter project name:",
-    },
-    {
-      type: "list",
-      name: "projectLanguage",
-      message: "Select project language:",
-      choices: ["JavaScript", "TypeScript"],
-    },
-  ]);
+interface Question {
+  type: "input" | "list" | "checkbox" | "confirm";
+  name: string;
+  message: string;
+  choices?: string[];
+}
 
-  const checkerAnswer = await inquirer.prompt([
-    {
-      type: "checkbox",
-      name: "checkers",
-      message: "Select tool for your project",
-      choices: ["eslint", "prettier", "stylelint"],
-      default: ["eslint", "prettier"],
-    },
-  ]);
+interface LanguageConfig {
+  tools: string[];
+  extensions: string[];
+  defaultRules?: string;
+}
+
+const initialQuestions: Question[] = [
+  {
+    type: "input",
+    name: "projectName",
+    message: "Enter project name:",
+  },
+  {
+    type: "list",
+    name: "projectLanguage",
+    message: "Select project language:",
+    choices: ["JavaScript", "TypeScript"],
+  },
+];
+
+const languageConfigs: Record<string, LanguageConfig> = {
+  JavaScript: {
+    tools: ["eslint", "prettier"],
+    extensions: [".js", ".jsx"],
+    defaultRules: "standard",
+  },
+  TypeScript: {
+    tools: ["eslint", "prettier", "@typescript-eslint/eslint-plugin"],
+    extensions: [".ts", ".tsx"],
+    defaultRules: "typescript-recommended",
+  },
+};
+
+async function initForge() {
+  console.log(chalk.blue("🔧 Setting up X-Forge for your project..."));
+
+  const initialAnswers = await inquirer.prompt(initialQuestions);
+  const selectedConfig = languageConfigs[initialAnswers.projectLanguage];
 
   const confirmAnswer = await inquirer.prompt([
     {
@@ -40,32 +61,33 @@ async function initForge() {
   ]);
 
   if (!confirmAnswer.proceed) {
-    console.log("Configuration cancelled.");
+    console.log(chalk.red("Configuration cancelled."));
     return;
   }
 
-  const answers = { ...initialAnswers, ...checkerAnswer };
-
   const config: ForgeConfig = {
     project: {
-      name: answers.projectName,
-      language: answers.projectLanguage,
+      name: initialAnswers.projectName,
+      language: initialAnswers.projectLanguage,
     },
     checks: {
-      [answers.projectLanguage]: {
-        eslint: answers.checkers.includes("eslint"),
-        prettier: answers.checkers.includes("prettier"),
-        stylelint: answers.checkers.includes("stylelint"),
+      [initialAnswers.projectLanguage]: {
+        ...Object.fromEntries(selectedConfig.tools.map((tool) => [tool, true])),
       },
     },
     autofix: {
       enabled: true,
     },
-    ignore: [],
+    ignore: [
+      "node_modules/",
+      "dist/",
+      "packages.json",
+      "yarn.lock",
+      "package-lock.json",
+    ],
   };
 
   try {
-    // Write as YAML since the filename is .forge.yml
     const yamlContent = yaml.dump(config);
     fs.writeFileSync(".forge.yml", yamlContent, "utf8");
     console.log(chalk.green("Forge initialized successfully"));
