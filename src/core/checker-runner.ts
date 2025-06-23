@@ -5,7 +5,7 @@ import { encode } from "node:querystring";
 export interface Issue {
   file: string;
   tool: string;
-  line: number;
+  line?: number;
   column?: number;
   message: string;
   severity: "error" | "warning" | "info";
@@ -97,23 +97,21 @@ export class CheckerRunner {
     try {
       const prettierIssues = await execa(
         "npx",
-        ["prettier", "--check", "--list-different", ...files],
-        { reject: false },
+        ["prettier", "--list-different", ...files],
+        {
+          reject: false,
+        },
       );
 
-      const prettierResult = JSON.parse(prettierIssues.stdout);
+      const prettierIssuesArray = prettierIssues.stdout.trim().split("\n");
 
-      for (const result of prettierResult) {
-        for (const message of result.messages) {
-          issues.push({
-            file: result.filePath,
-            tool: "prettier",
-            line: message.line,
-            column: message.column,
-            message: message.message,
-            severity: message.severity === 2 ? "error" : "warning",
-          });
-        }
+      for (const filePath of prettierIssuesArray) {
+        issues.push({
+          file: filePath,
+          tool: "prettier",
+          message: "Formatting error",
+          severity: "error",
+        });
       }
     } catch (error) {
       console.error("Error running Prettier:", error);
