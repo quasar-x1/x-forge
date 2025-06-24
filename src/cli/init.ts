@@ -4,6 +4,7 @@ import yaml from "js-yaml";
 import inquirer from "inquirer";
 import { Command } from "commander";
 import { ForgeConfig } from "../core/config";
+import { PackageInstaller, PackageManager } from "../core/package-installer";
 
 interface Question {
   type: "input" | "list" | "checkbox" | "confirm";
@@ -45,8 +46,44 @@ const languageConfigs: Record<string, LanguageConfig> = {
   },
 };
 
+async function getPackageManager(): Promise<PackageManager> {
+  const detectedPackageManager = PackageInstaller.detectPackageManager();
+
+  if (!detectedPackageManager) {
+    console.log("No package manager detected.");
+    process.exit(1);
+  }
+
+  const confirmPackageManager = await inquirer.prompt([
+    {
+      type: "confirm",
+      name: "proceed",
+      message: `Use ${detectedPackageManager} for installing packages?`,
+      default: true,
+    },
+  ]);
+
+  let selectedPackageManager = detectedPackageManager;
+
+  if (!confirmPackageManager.proceed) {
+    const selectPackageManager = await inquirer.prompt([
+      {
+        type: "list",
+        name: "packageManager",
+        message: "Select correct package manager:",
+        choices: ["npm", "bun", "yarn", "pnpm"],
+      },
+    ]);
+
+    const selectedPackageManager = selectPackageManager.packageManager;
+    console.log("Selected Package Manager:", selectedPackageManager);
+  }
+
+  return selectedPackageManager as PackageManager;
+}
+
 async function initForge() {
-  console.log(chalk.blue("🔧 Setting up X-Forge for your project..."));
+  console.log(chalk.blue("ㇺ Setting up X-Forge for your project..."));
 
   const initialAnswers = await inquirer.prompt(initialQuestions);
   const selectedConfig = languageConfigs[initialAnswers.projectLanguage];
@@ -63,6 +100,21 @@ async function initForge() {
   if (!confirmAnswer.proceed) {
     console.log(chalk.red("Configuration cancelled."));
     return;
+  }
+
+  const { installPackages } = await inquirer.prompt([
+    {
+      type: "confirm",
+      name: "installPackages",
+      message: "Install required packages?",
+      default: true,
+    },
+  ]);
+
+  let packageManager: PackageManager = "npm";
+
+  if (installPackages) {
+    packageManager = await getPackageManager();
   }
 
   const config: ForgeConfig = {
@@ -90,6 +142,14 @@ async function initForge() {
   try {
     const yamlContent = yaml.dump(config);
     fs.writeFileSync(".forge.yml", yamlContent, "utf8");
+
+    if (installPackages) {
+      console.log("ㇺ Installing Packages...");
+
+      const installer = new PackageInstaller(packageManager);
+      await installer.installLanguagePackage(initialAnswers.projectLanguage);
+    }
+
     console.log(chalk.green("Forge initialized successfully"));
   } catch (error) {
     console.error(chalk.red("Error writing config file:"), error);
@@ -103,11 +163,26 @@ export function initCommand(program: Command) {
     .description("Initialize forge in project")
     .action(async () => {
       try {
-        if (!fs.existsSync(".forge.yml")) {
-          await initForge();
-        } else {
-          console.log(chalk.red("Forge is already initialized"));
+        if (fs.existsSync(".forge.yml")) {
+          console.log(
+            chalk.yellow("🗴 X-Forge is already initialized in this project"),
+          );
+
+          const overwrite = await inquirer.prompt([
+            {
+              type: "confirm",
+              name: "overwrite",
+              message: "Do you want to overwrite the existing configuration?",
+              default: false,
+            },
+          ]);
+
+          if (!overwrite.overwrite) {
+            console.log(chalk.gray("Configuration preserved."));
+            return;
+          }
         }
+        await initForge();
       } catch (error) {
         console.error(chalk.red("Error initializing Forge:"), error);
       }

@@ -3,7 +3,7 @@ import { ForgeConfig, getFileExtension } from "./config";
 
 export class FileScanner {
   config: ForgeConfig;
-  extension: string;
+  extension: string[];
 
   constructor(config: ForgeConfig) {
     this.config = config;
@@ -35,7 +35,7 @@ export class FileScanner {
             files.push(...subFiles);
           }
         } else if (entry.isFile()) {
-          if (entry.name.endsWith(this.extension)) {
+          if (this.extension.includes(entry.name.split(".").pop() || "")) {
             files.push(entryPath);
           }
         }
