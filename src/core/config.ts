@@ -50,11 +50,11 @@ export async function loadConfig(
   }
 }
 
-export function getFileExtension(language: string) {
-  const extensionMap: { [key: string]: string } = {
-    JavaScript: "js",
-    TypeScript: "ts",
+export function getFileExtension(language: string): string[] {
+  const extensionMap: { [key: string]: string[] } = {
+    JavaScript: ["js", "jsx", "mjs"],
+    TypeScript: ["ts", "tsx"],
   };
 
-  return extensionMap[language];
+  return extensionMap[language] || [];
 }
