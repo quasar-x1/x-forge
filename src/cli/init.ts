@@ -5,18 +5,13 @@ import inquirer from "inquirer";
 import { Command } from "commander";
 import { ForgeConfig } from "../core/config";
 import { PackageInstaller, PackageManager } from "../core/package-installer";
+import { languageConfigs } from "../core/language-config";
 
 interface Question {
   type: "input" | "list" | "checkbox" | "confirm";
   name: string;
   message: string;
   choices?: string[];
-}
-
-interface LanguageConfig {
-  tools: string[];
-  extensions: string[];
-  defaultRules?: string;
 }
 
 const initialQuestions: Question[] = [
@@ -32,19 +27,6 @@ const initialQuestions: Question[] = [
     choices: ["JavaScript", "TypeScript"],
   },
 ];
-
-const languageConfigs: Record<string, LanguageConfig> = {
-  JavaScript: {
-    tools: ["eslint", "prettier"],
-    extensions: [".js", ".jsx"],
-    defaultRules: "standard",
-  },
-  TypeScript: {
-    tools: ["eslint", "prettier", "@typescript-eslint/eslint-plugin"],
-    extensions: [".ts", ".tsx"],
-    defaultRules: "typescript-recommended",
-  },
-};
 
 async function getPackageManager(): Promise<PackageManager> {
   const detectedPackageManager = PackageInstaller.detectPackageManager();

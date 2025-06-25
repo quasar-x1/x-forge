@@ -2,14 +2,9 @@ import { execa } from "execa";
 import chalk from "chalk";
 import fs from "fs";
 import path from "path";
+import { PackageInfo, languageConfigs } from "./language-config";
 
 export type PackageManager = "npm" | "yarn" | "pnpm" | "bun";
-
-export interface PackageInfo {
-  name: string;
-  version?: string;
-  dev?: boolean;
-}
 
 export class PackageInstaller {
   private PackageManager: PackageManager;
@@ -65,19 +60,20 @@ export class PackageInstaller {
     }
   }
 
-  static getLanguagePackage(languagePackage: string) {
-    switch (languagePackage) {
-      case "javascript":
-        return "javascript";
-      case "typescript":
-        return "typescript";
-      default:
-        throw new Error(`Unsupported language: ${languagePackage}`);
-    }
+  static getLanguagePackage(language: string): PackageInfo[] {
+    const packageMap: Record<string, PackageInfo[]> = {
+      javascript: [
+        { name: "eslint", version: "^4.9.4", dev: true },
+        { name: "prettier", version: "^10.9.1", dev: true },
+      ],
+      typescript: [
+        { name: "eslint", version: "^4.9.4", dev: true },
+        { name: "prettier", version: "^10.9.1", dev: true },
+      ],
+    };
+
+    return packageMap[language];
   }
 
-  async installLanguagePackage(language: string) {
-    const languagePackage = PackageInstaller.getLanguagePackage(language);
-    await execa(this.PackageManager, ["add", languagePackage]);
-  }
+  async installLanguagePackage(language: string) {}
 }
