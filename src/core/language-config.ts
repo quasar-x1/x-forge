@@ -17,8 +17,8 @@ export const languageConfigs: Record<string, LanguageConfig> = {
     extensions: [".js", ".jsx"],
     defaultRules: "standard",
     packages: [
-      { name: "eslint", version: "^4.9.4", dev: true },
-      { name: "prettier", version: "^10.9.1", dev: true },
+      { name: "eslint", version: "^9.29.0", dev: true },
+      { name: "prettier", version: "^3.6.1", dev: true },
     ],
   },
   TypeScript: {
@@ -26,11 +26,11 @@ export const languageConfigs: Record<string, LanguageConfig> = {
     extensions: [".ts", ".tsx"],
     defaultRules: "typescript-recommended",
     packages: [
-      { name: "eslint", version: "^4.9.4", dev: true },
-      { name: "prettier", version: "^10.9.1", dev: true },
+      { name: "eslint", version: "^9.29.0", dev: true },
+      { name: "prettier", version: "^3.6.1", dev: true },
       {
         name: "@typescript-eslint/eslint-plugin",
-        version: "^6.0.0",
+        version: "^8.35.0",
         dev: true,
       },
     ],

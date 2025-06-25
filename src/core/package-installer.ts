@@ -61,19 +61,34 @@ export class PackageInstaller {
   }
 
   static getLanguagePackage(language: string): PackageInfo[] {
-    const packageMap: Record<string, PackageInfo[]> = {
-      javascript: [
-        { name: "eslint", version: "^4.9.4", dev: true },
-        { name: "prettier", version: "^10.9.1", dev: true },
-      ],
-      typescript: [
-        { name: "eslint", version: "^4.9.4", dev: true },
-        { name: "prettier", version: "^10.9.1", dev: true },
-      ],
-    };
+    const normalizedLanguage = language.toLowerCase();
+    const config = Object.values(languageConfigs).find((config) =>
+      Object.keys(languageConfigs).find(
+        (key) => key.toLowerCase() === normalizedLanguage,
+      ),
+    );
 
-    return packageMap[language];
+    if (!config) {
+      throw new Error(`Unsupported language: ${language}`);
+    }
+
+    return config.packages;
   }
 
-  async installLanguagePackage(language: string) {}
+  async installLanguagePackage(language: string) {
+    const packages = PackageInstaller.getLanguagePackage(language);
+
+    for (const pkg of packages) {
+      const installArgs = ["install"];
+
+      if (pkg.dev) {
+        installArgs.push("--save-dev");
+      }
+
+      const packageName = pkg.version ? `${pkg.name}@${pkg.version}` : pkg.name;
+      installArgs.push(packageName);
+
+      await execa(this.PackageManager, installArgs);
+    }
+  }
 }
