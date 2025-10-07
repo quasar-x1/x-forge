@@ -24,7 +24,7 @@ To run this project locally, you'll need Node.js and a package manager like npm,
 
 1.  **Clone the Repository:**
     ```bash
-    git clone [https://github.com/quasar-x1/x-forge.git](https://github.com/quasar-x1/x-forge.git)
+    git clone https://github.com/quasar-x1/x-forge.git
     cd x-forge
     ```
 
