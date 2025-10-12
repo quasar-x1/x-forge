@@ -1,7 +1,7 @@
 import { Command } from "commander";
 import { loadConfig } from "../core/config";
 import { FileScanner } from "../core/file-scanner";
-import { CheckerRunner, Issue, CheckResult } from "../core/checker-runner";
+import { CheckerRunner } from "../core/checker-runner";
 import chalk from "chalk";
 
 async function checkProject() {
@@ -16,7 +16,7 @@ async function checkProject() {
       return;
     }
 
-    console.log(chalk.blue("📁 Scanning for files..."));
+    console.log(chalk.blue("󰥨 Scanning for files..."));
     const scanner = new FileScanner(config);
     const files = await scanner.getFiles();
 
@@ -25,7 +25,7 @@ async function checkProject() {
       return;
     }
 
-    console.log(chalk.blue("🔍 Checking files..."));
+    console.log(chalk.blue("󰈞 Checking files..."));
 
     const runner = new CheckerRunner(config);
     const issues = await runner.run(files);
