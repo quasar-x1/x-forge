@@ -3,11 +3,6 @@ import path from "path";
 import type { Linter } from "eslint";
 import { languageConfigs } from "./language-config";
 
-// export interface EslintConfig {
-//   extends?: string[];
-//   rules?: Record<string, any>;
-// }
-
 export interface PrettierConfig {
   printWidth?: number;
   tabWidth?: number;
@@ -18,15 +13,6 @@ export interface PrettierConfig {
   bracketSpacing?: boolean;
   arrowParens?: "avoid" | "always";
 }
-
-// const defaultEslintConfig: Linter.Config = {
-//   extends: ["eslint:recommended"],
-//   rules: {
-//     "no-console": "warn",
-//     "no-debugger": "warn",
-//     "no-unused-vars": "warn",
-//   },
-// };
 
 const defaultPrettierConfig: PrettierConfig = {
   printWidth: 80,
@@ -39,7 +25,8 @@ const defaultPrettierConfig: PrettierConfig = {
   arrowParens: "always",
 };
 
-const prettierFormat = `import { type Config } from "prettier";
+const prettierFormat = `
+  import { type Config } from "prettier";
 
   const config: Config = {
     ...defaultPrettierConfig,

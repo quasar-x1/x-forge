@@ -113,11 +113,18 @@ async function initForge() {
       enabled: true,
     },
     ignore: [
-      "node_modules/",
-      "dist/",
+      "node_modules",
+      "dist",
+      "build",
+      "coverage",
+      ".git",
       "packages.json",
-      "yarn.lock",
+      "package.json",
       "package-lock.json",
+      "yarn.lock",
+      "pnpm-lock.yaml",
+      "bun.lockb",
+      "*.min.js",
     ],
   };
 

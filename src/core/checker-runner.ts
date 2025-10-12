@@ -70,7 +70,17 @@ export class CheckerRunner {
         { reject: false },
       );
 
-      const eslintResult = JSON.parse(eslintIssues.stdout);
+      let eslintResult;
+      try {
+        eslintResult = JSON.parse(eslintIssues.stdout);
+      } catch (parseError) {
+        console.error("❌ Failed to parse ESLint output");
+        console.error("stderr:", eslintIssues.stderr);
+        console.error("exit code:", eslintIssues.exitCode);
+        console.error("Parse error:", parseError);
+
+        return issues;
+      }
 
       for (const result of eslintResult) {
         for (const message of result.messages) {
