@@ -19,4 +19,4 @@ ignore:
   - yarn.lock
   - pnpm-lock.yaml
   - bun.lockb
-  - '*.min.js'
+  - "*.min.js"

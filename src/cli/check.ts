@@ -31,7 +31,15 @@ async function checkProject() {
     const issues = await runner.run(files);
 
     console.log(chalk.red("Issues found:", issues.issues.length));
-    console.log("Issues:", issues);
+    if (issues.issues.length > 0) {
+      for (const issue of issues.issues) {
+        console.log(
+          chalk.yellow(`• ${issue.file}`) +
+            chalk.gray(`:${issue.line || "-"}`) +
+            ` → ${issue.message}`,
+        );
+      }
+    }
   } catch (error) {
     console.error(chalk.red("Error loading config file:", error));
   }

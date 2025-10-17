@@ -33,7 +33,7 @@ export async function loadConfig(
 
     if (!config.ignore) {
       config.ignore = [
-        "node_modules/",
+        "node_modules",
         "dist/",
         "packages.json",
         "yarn.lock",

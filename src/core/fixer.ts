@@ -2,6 +2,7 @@ import { execa } from "execa";
 import { ForgeConfig } from "../core/config";
 import chalk from "chalk";
 import path from "path";
+import inquirer from "inquirer";
 
 export class Fixer {
   config: ForgeConfig;
@@ -24,6 +25,22 @@ export class Fixer {
   //   }
   // }
 
+  private async askBefore() {
+    const { yes } = await inquirer.prompt([
+      {
+        type: "confirm",
+        name: "yes",
+        message: "Are you sure you want to fix the files?",
+        default: false,
+      },
+    ]);
+
+    if (!yes) {
+      console.log(chalk.red("󰈖 Fixing cancelled."));
+      process.exit(0);
+    }
+  }
+
   async fix() {
     const { checks, project, autofix } = this.config;
 
@@ -36,11 +53,12 @@ export class Fixer {
 
     if (!tools) {
       throw new Error("Project language not specified");
-      return;
     }
 
     if (tools.eslint) {
       try {
+        await this.askBefore();
+
         const { stdout: dryRunOutput } = await execa(
           "eslint",
           ["--fix-dry-run", "--format", "json", "."],
@@ -59,7 +77,6 @@ export class Fixer {
 
         const filesToFix = dryRunResults
           .filter((r: any) => {
-            // hanya file yang benar-benar menghasilkan output berbeda
             return r.output && r.output.trim() !== r.source?.trim();
           })
           .map((r: any) => path.relative(process.cwd(), r.filePath));

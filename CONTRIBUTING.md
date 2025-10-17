@@ -13,22 +13,24 @@ First off, thank you for considering contributing to x-forge! We welcome any con
 
 ## Contribution Guidelines
 
--   **Code Style:** Please ensure your code follows the existing code style. This project uses ESLint and Prettier to maintain code consistency.
--   **Commit Messages:** Use clear and descriptive commit messages. We encourage the use of [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
--   **Reporting Bugs:** If you find a bug, please create a new issue in the repository with a clear description of the problem and steps to reproduce it.
--   **Suggesting Features:** If you have an idea for a new feature, please create a new issue to discuss it before you start working on it.
+- **Code Style:** Please ensure your code follows the existing code style. This project uses ESLint and Prettier to maintain code consistency.
+- **Commit Messages:** Use clear and descriptive commit messages. We encourage the use of [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
+- **Reporting Bugs:** If you find a bug, please create a new issue in the repository with a clear description of the problem and steps to reproduce it.
+- **Suggesting Features:** If you have an idea for a new feature, please create a new issue to discuss it before you start working on it.
 
 ## Running the Project Locally
 
 To run this project locally, you'll need Node.js and a package manager like npm, Yarn, pnpm, or Bun.
 
 1.  **Clone the Repository:**
+
     ```bash
     git clone https://github.com/quasar-x1/x-forge.git
     cd x-forge
     ```
 
 2.  **Install Dependencies:**
+
     ```bash
     npm install
     ```
