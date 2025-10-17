@@ -28,11 +28,11 @@
 
 ## Features
 
--   **Automated Code Linting:** Runs ESLint to catch common issues and potential bugs in your code.
--   **Consistent Code Formatting:** Utilizes Prettier to ensure your entire codebase adheres to a uniform format.
--   **Multi-Language Support:** Seamlessly works with both JavaScript and TypeScript projects.
--   **Quick Initialization:** An interactive `init` command to get you started with a `.forge.yml` configuration file in seconds.
--   **Flexible and Configurable:** Easily customize linting and formatting rules to fit your project's specific needs.
+- **Automated Code Linting:** Runs ESLint to catch common issues and potential bugs in your code.
+- **Consistent Code Formatting:** Utilizes Prettier to ensure your entire codebase adheres to a uniform format.
+- **Multi-Language Support:** Seamlessly works with both JavaScript and TypeScript projects.
+- **Quick Initialization:** An interactive `init` command to get you started with a `.forge.yml` configuration file in seconds.
+- **Flexible and Configurable:** Easily customize linting and formatting rules to fit your project's specific needs.
 
 ---
 
@@ -76,7 +76,7 @@ checks:
 autofix:
   enabled: true
 ignore:
-  - "node_modules/"
+  - "node_modules"
   - "dist/"
   - "packages.json"
   - "yarn.lock"

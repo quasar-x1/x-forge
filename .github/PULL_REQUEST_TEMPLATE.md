@@ -1,4 +1,5 @@
 ### Type of Change
+
 - [ ] Bug Fix (A non-breaking change that fixes an issue)
 - [ ] New Feature (A non-breaking change that adds functionality)
 - [ ] Breaking Change (A fix or feature that would cause existing functionality to not work as expected)
@@ -9,14 +10,17 @@
 ---
 
 ### Description
+
 ---
 
 ### Related Issues
+
 Closes #
 
 ---
 
 ### How to Test
+
 1.
 2.
 3.
@@ -24,6 +28,7 @@ Closes #
 ---
 
 ### Checklist
+
 - [ ] My code follows the style guidelines of this project.
 - [ ] I have performed a self-review of my own code.
 - [ ] I have commented my code, particularly in hard-to-understand areas.

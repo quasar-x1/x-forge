@@ -72,7 +72,11 @@ export class CheckerRunner {
 
       let eslintResult;
       try {
-        eslintResult = JSON.parse(eslintIssues.stdout);
+        if (eslintIssues.stdout) {
+          eslintResult = JSON.parse(eslintIssues.stdout);
+        } else {
+          eslintResult = [];
+        }
       } catch (parseError) {
         console.error("❌ Failed to parse ESLint output");
         console.error("stderr:", eslintIssues.stderr);
@@ -113,7 +117,10 @@ export class CheckerRunner {
         },
       );
 
-      const prettierIssuesArray = prettierIssues.stdout.trim().split("\n");
+      const prettierIssuesArray = prettierIssues.stdout
+        .trim()
+        .split("\n")
+        .filter(Boolean);
 
       for (const filePath of prettierIssuesArray) {
         issues.push({

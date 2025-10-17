@@ -29,7 +29,7 @@ export class FileScanner {
         if (entry.isDirectory()) {
           if (
             !entry.name.startsWith(".") &&
-            !this.ignoredFiles().includes(entryPath)
+            !this.ignoredFiles().some((p) => entryPath.startsWith(p))
           ) {
             const subFiles = await this.scanDirectory(entryPath);
             files.push(...subFiles);
