@@ -1,6 +1,5 @@
-import { execa } from "execa";
-import { ForgeConfig } from "./config";
-import { encode } from "node:querystring";
+import { execa } from 'execa';
+import { ForgeConfig } from './config';
 
 export interface Issue {
   file: string;
@@ -8,7 +7,7 @@ export interface Issue {
   line?: number;
   column?: number;
   message: string;
-  severity: "error" | "warning" | "info";
+  severity: 'error' | 'warning' | 'info';
   fix?: string;
 }
 
@@ -37,9 +36,9 @@ export class CheckerRunner {
       try {
         const eslintIssues = await this.runEslint(files);
         issues.push(...eslintIssues);
-        tools.push("eslint");
+        tools.push('eslint');
       } catch (error) {
-        console.error("Error running ESLint:", error);
+        console.error('Error running ESLint:', error);
       }
     }
 
@@ -47,9 +46,9 @@ export class CheckerRunner {
       try {
         const prettierIssues = await this.runPrettier(files);
         issues.push(...prettierIssues);
-        tools.push("prettier");
+        tools.push('prettier');
       } catch (error) {
-        console.error("Error running Prettier:", error);
+        console.error('Error running Prettier:', error);
       }
     }
 
@@ -57,7 +56,7 @@ export class CheckerRunner {
       files,
       tools,
       issues,
-      hasIssues: issues.some((issues) => issues.severity === "error"),
+      hasIssues: issues.some((issues) => issues.severity === 'error'),
     };
   }
   private async runEslint(files: string[]): Promise<Issue[]> {
@@ -65,9 +64,9 @@ export class CheckerRunner {
 
     try {
       const eslintIssues = await execa(
-        "npx",
-        ["eslint", "--format=json", ...files],
-        { reject: false },
+        'npx',
+        ['eslint', '--format=json', ...files],
+        { reject: false }
       );
 
       let eslintResult;
@@ -78,10 +77,10 @@ export class CheckerRunner {
           eslintResult = [];
         }
       } catch (parseError) {
-        console.error("❌ Failed to parse ESLint output");
-        console.error("stderr:", eslintIssues.stderr);
-        console.error("exit code:", eslintIssues.exitCode);
-        console.error("Parse error:", parseError);
+        console.error('❌ Failed to parse ESLint output');
+        console.error('stderr:', eslintIssues.stderr);
+        console.error('exit code:', eslintIssues.exitCode);
+        console.error('Parse error:', parseError);
 
         return issues;
       }
@@ -90,16 +89,16 @@ export class CheckerRunner {
         for (const message of result.messages) {
           issues.push({
             file: result.filePath,
-            tool: "eslint",
+            tool: 'eslint',
             line: message.line,
             column: message.column,
             message: message.message,
-            severity: message.severity === 2 ? "error" : "warning",
+            severity: message.severity === 2 ? 'error' : 'warning',
           });
         }
       }
     } catch (error) {
-      console.error("Error running ESLint:", error);
+      console.error('Error running ESLint:', error);
     }
 
     return issues;
@@ -110,28 +109,28 @@ export class CheckerRunner {
 
     try {
       const prettierIssues = await execa(
-        "npx",
-        ["prettier", "--list-different", ...files],
+        'npx',
+        ['prettier', '--list-different', ...files],
         {
           reject: false,
-        },
+        }
       );
 
       const prettierIssuesArray = prettierIssues.stdout
         .trim()
-        .split("\n")
+        .split('\n')
         .filter(Boolean);
 
       for (const filePath of prettierIssuesArray) {
         issues.push({
           file: filePath,
-          tool: "prettier",
-          message: "Formatting error",
-          severity: "error",
+          tool: 'prettier',
+          message: 'Formatting error',
+          severity: 'error',
         });
       }
     } catch (error) {
-      console.error("Error running Prettier:", error);
+      console.error('Error running Prettier:', error);
     }
 
     return issues;
