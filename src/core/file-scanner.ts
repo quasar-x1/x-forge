@@ -1,5 +1,5 @@
-import fs from "fs";
-import { ForgeConfig, getFileExtension } from "./config";
+import fs from 'fs';
+import { ForgeConfig, getFileExtension } from './config';
 
 export class FileScanner {
   config: ForgeConfig;
@@ -28,20 +28,22 @@ export class FileScanner {
 
         if (entry.isDirectory()) {
           if (
-            !entry.name.startsWith(".") &&
-            !this.ignoredFiles().some((p) => entryPath.startsWith(p))
+            !entry.name.startsWith('.') &&
+            !this.ignoredFiles().some(
+              (p) => entry.name === p || entryPath.includes(`/${p}/`)
+            )
           ) {
             const subFiles = await this.scanDirectory(entryPath);
             files.push(...subFiles);
           }
         } else if (entry.isFile()) {
-          if (this.extension.includes(entry.name.split(".").pop() || "")) {
+          if (this.extension.includes(entry.name.split('.').pop() || '')) {
             files.push(entryPath);
           }
         }
       }
     } catch (error) {
-      console.error("Error scanning directory:", error);
+      console.error('Error scanning directory:', error);
     }
 
     return files;

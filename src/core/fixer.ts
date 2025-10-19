@@ -1,8 +1,14 @@
-import { execa } from "execa";
-import { ForgeConfig } from "../core/config";
-import chalk from "chalk";
-import path from "path";
-import inquirer from "inquirer";
+import { execa } from 'execa';
+import { ForgeConfig } from '../core/config';
+import chalk from 'chalk';
+import path from 'path';
+import inquirer from 'inquirer';
+
+interface DryRunResult {
+  filePath: string;
+  source?: string;
+  output?: string;
+}
 
 export class Fixer {
   config: ForgeConfig;
@@ -11,32 +17,18 @@ export class Fixer {
     this.config = config;
   }
 
-  // private async gitDiff() {
-  //   const { stdout } = await execa("git", ["diff", "--name-only"]);
-  //   const changedFiles = stdout.split("\n").filter((f) => f.trim());
-
-  //   if (changedFiles.length === 0) {
-  //     console.log(chalk.yellow("No files needed fixing."));
-  //   } else {
-  //     console.log(chalk.green(`\n󰈖 Fixed ${changedFiles.length} file(s):`));
-  //     for (const file of changedFiles) {
-  //       console.log(chalk.dim(" - " + file));
-  //     }
-  //   }
-  // }
-
   private async askBefore() {
     const { yes } = await inquirer.prompt([
       {
-        type: "confirm",
-        name: "yes",
-        message: "Are you sure you want to fix the files?",
+        type: 'confirm',
+        name: 'yes',
+        message: 'Are you sure you want to fix the files?',
         default: false,
       },
     ]);
 
     if (!yes) {
-      console.log(chalk.red("󰈖 Fixing cancelled."));
+      console.log(chalk.red('󰈖 Fixing cancelled.'));
       process.exit(0);
     }
   }
@@ -52,68 +44,78 @@ export class Fixer {
     const tools = checks?.[lang];
 
     if (!tools) {
-      throw new Error("Project language not specified");
+      throw new Error('Project language not specified');
     }
 
     if (tools.eslint) {
       try {
         await this.askBefore();
 
-        const { stdout: dryRunOutput } = await execa(
-          "eslint",
-          ["--fix-dry-run", "--format", "json", "."],
-          { reject: false },
+        const { stdout: dryRunOutput, stderr } = await execa(
+          'eslint',
+          ['--fix-dry-run', '--format', 'json', '.'],
+          { reject: false }
         );
 
+        if (!dryRunOutput || dryRunOutput.trim() === '') {
+          if (stderr) {
+            throw new Error(stderr);
+          }
+
+          console.log(chalk.whiteBright('󱀺 No files need fixing.'));
+          return;
+        }
+
         const dryRunResults = JSON.parse(dryRunOutput);
-        if (
-          !dryRunOutput ||
-          dryRunOutput.trim() === "" ||
-          dryRunOutput.trim() === "[]"
-        ) {
-          console.log(chalk.whiteBright("󱀺 No files need fixing."));
+        if (dryRunResults.length === 0) {
+          console.log(chalk.whiteBright('󱀺 No files need fixing.'));
           return;
         }
 
         const filesToFix = dryRunResults
-          .filter((r: any) => {
+          .filter((r: DryRunResult) => {
             return r.output && r.output.trim() !== r.source?.trim();
           })
-          .map((r: any) => path.relative(process.cwd(), r.filePath));
+          .map((r: DryRunResult) => path.relative(process.cwd(), r.filePath));
 
         if (filesToFix.length === 0) {
-          console.log(chalk.whiteBright("󱀺 No files need fixing."));
+          console.log(chalk.whiteBright('󱀺 No files need fixing.'));
           return;
         }
 
-        await execa("eslint", ["--fix", "."], { reject: false });
+        await execa('eslint', ['--fix', '.'], { reject: false });
 
-        console.log("󱧃 Fixed by ESLint:");
+        console.log('󱧃 Fixed by ESLint:');
         for (const file of filesToFix) {
-          console.log("  •", file);
+          console.log('  •', file);
         }
 
-        console.log(chalk.green("󰈖 Files fixed successfully."));
-      } catch (error: any) {
-        console.log(chalk.red("󰮘 ESLint failed:"));
-        console.log(chalk.dim(error.stderr || error.message));
+        console.log(chalk.green('󰈖 Files fixed successfully.'));
+      } catch (error: unknown) {
+        console.log(chalk.red('󰮘 ESLint failed:'));
 
-        if (error.exitCode === 1) {
-          console.log(chalk.yellow("  → ESLint found errors (this is normal)"));
-        } else if (error.exitCode === 2) {
+        if (error instanceof Error) {
+          console.log(chalk.dim(error.message));
+        } else {
+          console.log(chalk.dim(String(error)));
+        }
+
+        const err = error as { stderr?: string; exitCode?: number };
+        if (err.exitCode === 1) {
+          console.log(chalk.yellow('  → ESLint found errors (this is normal)'));
+        } else if (err.exitCode === 2) {
           console.log(
-            chalk.yellow("  → Configuration error. Check eslint.config.mjs"),
+            chalk.yellow('  → Configuration error. Check eslint.config.mjs')
           );
         } else {
-          console.log(chalk.yellow("  → Unexpected error occurred"));
+          console.log(chalk.yellow('  → Unexpected error occurred'));
+          console.error(error);
         }
       }
     }
 
     if (tools.prettier) {
-      await execa("prettier", ["--write", "."]);
+      await execa('prettier', ['--write', '.']);
     }
-
-    // await this.gitDiff();
   }
 }

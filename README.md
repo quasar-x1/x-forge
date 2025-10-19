@@ -66,21 +66,21 @@ x-forge is configured using a `.forge.yml` file in your project's root directory
 
 ```yaml
 project:
-  name: "My Awesome Project"
-  language: "TypeScript"
+  name: 'My Awesome Project'
+  language: 'TypeScript'
 checks:
   TypeScript:
     eslint: true
     prettier: true
-    "@typescript-eslint/eslint-plugin": true
+    '@typescript-eslint/eslint-plugin': true
 autofix:
   enabled: true
 ignore:
-  - "node_modules"
-  - "dist/"
-  - "packages.json"
-  - "yarn.lock"
-  - "package-lock.json"
+  - 'node_modules'
+  - 'dist/'
+  - 'packages.json'
+  - 'yarn.lock'
+  - 'package-lock.json'
 ```
 
 ---
